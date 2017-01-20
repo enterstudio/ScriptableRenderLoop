@@ -26,6 +26,16 @@ Shader "HDRenderPipeline/LayeredLitTesselation"
         _Smoothness2("Smoothness2", Range(0.0, 1.0)) = 0.5
         _Smoothness3("Smoothness3", Range(0.0, 1.0)) = 0.5
 
+        _SmoothnessMin0("SmoothnessMin0", Float) = 0.0
+        _SmoothnessMin1("SmoothnessMin1", Float) = 0.0
+        _SmoothnessMin2("SmoothnessMin2", Float) = 0.0
+        _SmoothnessMin3("SmoothnessMin3", Float) = 0.0
+
+        _SmoothnessMax0("SmoothnessMax0", Float) = 1.0
+        _SmoothnessMax1("SmoothnessMax1", Float) = 1.0
+        _SmoothnessMax2("SmoothnessMax2", Float) = 1.0
+        _SmoothnessMax3("SmoothnessMax3", Float) = 1.0
+
         _MaskMap0("MaskMap0", 2D) = "white" {}
         _MaskMap1("MaskMap1", 2D) = "white" {}
         _MaskMap2("MaskMap2", 2D) = "white" {}
@@ -81,10 +91,15 @@ Shader "HDRenderPipeline/LayeredLitTesselation"
         _DetailNormalScale2("_DetailNormalScale2", Range(0.0, 2.0)) = 1
         _DetailNormalScale3("_DetailNormalScale3", Range(0.0, 2.0)) = 1
 
-        _DetailSmoothnessScale0("_DetailSmoothnessScale0", Range(-2.0, 2.0)) = 1
-        _DetailSmoothnessScale1("_DetailSmoothnessScale1", Range(-2.0, 2.0)) = 1
-        _DetailSmoothnessScale2("_DetailSmoothnessScale2", Range(-2.0, 2.0)) = 1
-        _DetailSmoothnessScale3("_DetailSmoothnessScale3", Range(-2.0, 2.0)) = 1
+        _DetailSmoothnessMin0("DetailSmoothnessMin0", Float) = 0.0
+        _DetailSmoothnessMin1("DetailSmoothnessMin1", Float) = 0.0
+        _DetailSmoothnessMin2("DetailSmoothnessMin2", Float) = 0.0
+        _DetailSmoothnessMin3("DetailSmoothnessMin3", Float) = 0.0
+
+        _DetailSmoothnessMax0("DetailSmoothnessMax0", Float) = 1.0
+        _DetailSmoothnessMax1("DetailSmoothnessMax1", Float) = 1.0
+        _DetailSmoothnessMax2("DetailSmoothnessMax2", Float) = 1.0
+        _DetailSmoothnessMax3("DetailSmoothnessMax3", Float) = 1.0
 
         _DetailHeightScale0("_DetailHeightScale0", Range(-2.0, 2.0)) = 1
         _DetailHeightScale1("_DetailHeightScale1", Range(-2.0, 2.0)) = 1

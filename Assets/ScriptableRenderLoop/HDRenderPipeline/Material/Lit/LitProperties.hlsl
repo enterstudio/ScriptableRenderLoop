@@ -8,6 +8,8 @@ float4 _BaseColorMap_ST;
 
 float _Metallic;
 float _Smoothness;
+float _SmoothnessScale;
+float _SmoothnessBias;
 TEXTURE2D(_MaskMap);
 SAMPLER2D(sampler_MaskMap);
 TEXTURE2D(_SpecularOcclusionMap);
@@ -24,7 +26,8 @@ SAMPLER2D(sampler_DetailMap);
 float4 _DetailMap_ST;
 float _DetailAlbedoScale;
 float _DetailNormalScale;
-float _DetailSmoothnessScale;
+float _DetailSmoothnessMin;
+float _DetailSmoothnessMax;
 float _DetailHeightScale;
 float _DetailAOScale;
 
@@ -99,6 +102,8 @@ float4 _BaseColorMap3_ST;
 
 PROP_DECL(float, _Metallic);
 PROP_DECL(float, _Smoothness);
+PROP_DECL(float, _SmoothnessScale);
+PROP_DECL(float, _SmoothnessBias);
 PROP_DECL_TEX2D(_MaskMap);
 PROP_DECL_TEX2D(_SpecularOcclusionMap);
 
@@ -116,7 +121,8 @@ float4 _DetailMap3_ST;
 PROP_DECL(float, _UVDetail);
 PROP_DECL(float, _DetailAlbedoScale);
 PROP_DECL(float, _DetailNormalScale);
-PROP_DECL(float, _DetailSmoothnessScale);
+PROP_DECL(float, _DetailSmoothnessMin);
+PROP_DECL(float, _DetailSmoothnessMax);
 PROP_DECL(float, _DetailHeightScale);
 PROP_DECL(float, _DetailAOScale);
 

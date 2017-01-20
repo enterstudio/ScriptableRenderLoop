@@ -11,6 +11,10 @@ Shader "HDRenderPipeline/LitTessellation"
 
         _Metallic("_Metallic", Range(0.0, 1.0)) = 0
         _Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
+        _SmoothnessMin("SmoothnessMin", Float) = 0.0
+        _SmoothnessMax("SmoothnessMax", Float) = 1.0
+        [HideInInspector]_SmoothnessScale("SmoothnessScale", Float) = 0.0
+        [HideInInspector]_SmoothnessBias("SmoothnessBias", Float) = 1.0
         _MaskMap("MaskMap", 2D) = "white" {}
 
         _SpecularOcclusionMap("SpecularOcclusion", 2D) = "white" {}
@@ -30,7 +34,8 @@ Shader "HDRenderPipeline/LitTessellation"
         _DetailMask("DetailMask", 2D) = "white" {}
         _DetailAlbedoScale("_DetailAlbedoScale", Range(-2.0, 2.0)) = 1
         _DetailNormalScale("_DetailNormalScale", Range(0.0, 2.0)) = 1
-        _DetailSmoothnessScale("_DetailSmoothnessScale", Range(-2.0, 2.0)) = 1
+        _DetailSmoothnessMin("DetailSmoothnessMin", Float) = 0.0
+        _DetailSmoothnessMax("DetailSmoothnessMax", Float) = 1.0
         _DetailHeightScale("_DetailHeightScale", Range(-2.0, 2.0)) = 1
         _DetailAOScale("_DetailAOScale", Range(-2.0, 2.0)) = 1        
 

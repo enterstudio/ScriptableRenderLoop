@@ -249,7 +249,7 @@ float ADD_IDX(GetSurfaceData)(FragInputs input, LayerTexCoord layerTexCoord, out
 #else
     surfaceData.perceptualSmoothness = 1.0;
 #endif
-    surfaceData.perceptualSmoothness *= ADD_IDX(_Smoothness);
+    surfaceData.perceptualSmoothness *= ADD_IDX(_SmoothnessScale) + ADD_IDX(_SmoothnessBias);
 #ifdef _DETAIL_MAP
     surfaceData.perceptualSmoothness *= LerpWhiteTo(2.0 * saturate(detailSmoothness * ADD_IDX(_DetailSmoothnessScale)), detailMask);
 #endif

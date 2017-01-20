@@ -86,6 +86,10 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         protected const string kMetallic = "_Metallic";
         protected MaterialProperty smoothness = null;
         protected const string kSmoothness = "_Smoothness";
+        protected MaterialProperty smoothnessScale = null;
+        protected const string kSmoothnessScale = "_SmoothnessScale";
+        protected MaterialProperty smoothnessBias = null;
+        protected const string kSmoothnessBias = "_SmoothnessBias";
         protected MaterialProperty maskMap = null;
         protected const string kMaskMap = "_MaskMap";
         protected MaterialProperty specularOcclusionMap = null;
@@ -154,6 +158,8 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             baseColorMap = FindProperty(kBaseColorMap, props);
             metallic = FindProperty(kMetallic, props);
             smoothness = FindProperty(kSmoothness, props);
+            smoothnessScale = FindProperty(kSmoothnessScale, props);
+            smoothnessBias = FindProperty(kSmoothnessBias, props);
             maskMap = FindProperty(kMaskMap, props);
             specularOcclusionMap = FindProperty(kSpecularOcclusionMap, props);
             normalMap = FindProperty(kNormalMap, props);
@@ -237,6 +243,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             m_MaterialEditor.TexturePropertySingleLine(smoothnessInAlbedoAlpha ? Styles.baseColorSmoothnessText : Styles.baseColorText, baseColorMap, baseColor);
             m_MaterialEditor.ShaderProperty(metallic, Styles.metallicText);
             m_MaterialEditor.ShaderProperty(smoothness, Styles.smoothnessText);
+            EditorGUILayout.MinMaxSlider();
 
             if (smoothnessInAlbedoAlpha && useEmissiveMask)
                 m_MaterialEditor.TexturePropertySingleLine(Styles.maskMapEText, maskMap);
