@@ -21,6 +21,24 @@ struct FragInputs
 
     // For two sided lighting
     bool isFrontFace;
+
+#ifdef SURFACE_GRADIENT
+    // cached bump globals reusable for all possible UVs including procedural
+    float3 sigmaX;
+    float3 sigmaY;
+    float3 vtxNormalWS; // Normalized
+    float flipSign;
+
+    // used for vertex level tangent space only (support on one UV set only)
+    // TODO: Question Morten: Can I still use this one for POM ?
+    float3 mikktsTang;
+    float3 mikktsBino;
+
+    // Use for the 3 other UVSet;
+    float3 vT1, vB1;
+    float3 vT2, vB2;
+    float3 vT3, vB3;
+#endif
 };
 
 // FragInputs use dir vector that are normalized in the code even if not used

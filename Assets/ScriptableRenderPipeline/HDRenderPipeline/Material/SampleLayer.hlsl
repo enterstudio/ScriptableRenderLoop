@@ -8,6 +8,14 @@ struct LayerUV
     float2 uvZY;
     float2 uvXZ;
     float2 uvXY;
+
+#ifdef SURFACE_GRADIENT
+    // tangent basis use with uv
+    float3 vT, vB;
+    // TODO ask morten: what about simple planar ? like triplanar y plane ?
+    // For triplanar
+    float3 vertexNormalWS;
+#endif
 };
 
 // Multiple includes of the file to handle all variations of textures sampling for regular, lod and bias

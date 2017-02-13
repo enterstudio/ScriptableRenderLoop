@@ -40,11 +40,31 @@ float3 ADD_FUNC_SUFFIX(SampleLayerNormal)(TEXTURE2D_ARGS(layerTex, layerSampler)
         if (triplanarWeights.z > 0.0)
             val += triplanarWeights.z * UnpackNormalAG(SAMPLE_TEXTURE_FUNC(layerTex, layerSampler, layerUV.uvXY, param), scale);
 
+#ifdef SURFACE_GRADIENT
+        float2 deriv_xplane, float2 deriv_yplane, float2 deriv_zplane;
+        deriv_xplane = deriv_yplane = deriv_zplane = float2(0.0, 0.0);
+
+        if (triplanarWeights.x > 0.0)
+            deriv_xplane = triplanarWeights.x * DerivativeAG(SAMPLE_TEXTURE_FUNC(layerTex, layerSampler, layerUV.uvZY, param), scale);
+        if (triplanarWeights.y > 0.0)
+            deriv_yplane += triplanarWeights.y * DerivativeAG(SAMPLE_TEXTURE_FUNC(layerTex, layerSampler, layerUV.uvXZ, param), scale);
+        if (triplanarWeights.z > 0.0)
+            deriv_zplane += triplanarWeights.z * DerivativeAG(SAMPLE_TEXTURE_FUNC(layerTex, layerSampler, layerUV.uvXY, param), scale);
+
+        float3 grad = float3(deriv_zplane.x + deriv_yplane.y, deriv_zplane.y + deriv_xplane.y, deriv_xplane.x + deriv_yplane.x);
+        return surfgradFromVolumeGradient(layerUV.vertexNormalWS, grad);
+#endif
+
         return normalize(val);
     }
     else
-    {
+    {        
+#ifdef SURFACE_GRADIENT
+        float2 deriv = DerivativeAG(SAMPLE_TEXTURE_FUNC(layerTex, layerSampler, layerUV.uv, param), scale);
+        return deriv.x * vT + deriv.y * vB;
+#else
         return UnpackNormalAG(SAMPLE_TEXTURE_FUNC(layerTex, layerSampler, layerUV.uv, param), scale);
+#endif
     }
 }
 

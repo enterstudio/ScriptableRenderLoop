@@ -47,6 +47,20 @@ void ADD_IDX(ComputeLayerTexCoord)( float2 texCoord0, float2 texCoord1, float2 t
     ADD_IDX(layerTexCoord.details).uvXZ = TRANSFORM_TEX(uvXZ, ADD_IDX(_DetailMap));
     ADD_IDX(layerTexCoord.details).uvXY = TRANSFORM_TEX(uvXY, ADD_IDX(_DetailMap));
     ADD_IDX(layerTexCoord.details).uvZY = TRANSFORM_TEX(uvZY, ADD_IDX(_DetailMap));
+
+    #ifdef SURFACE_GRADIENT
+    // TODO: ask morten, should I provide uv corrdiante after transform here or texcoord are enough ?
+    // TODO: Need input here! What can we do when this code is call from tessellation ? No normal map in this case, need a specific bool
+    ADD_IDX(layerTexCoord.base).vB =    ADD_IDX(_UVMappingMask).x * input.mikktB +
+                                        ADD_IDX(_UVMappingMask).y * input.vB1 +
+                                        ADD_IDX(_UVMappingMask).z * input.vB2 +
+                                        ADD_IDX(_UVMappingMask).w * input.vB3;
+
+    //
+
+    ADD_IDX(layerTexCoord.base).vertexNormalWS = vertexNormalWS;
+    ADD_IDX(layerTexCoord.details).vertexNormalWS = vertexNormalWS;
+    #endif
 }
 
 float3 ADD_IDX(GetNormalTS)(FragInputs input, LayerTexCoord layerTexCoord, float3 detailNormalTS, float detailMask, bool useBias, float bias)
@@ -69,21 +83,46 @@ float3 ADD_IDX(GetNormalTS)(FragInputs input, LayerTexCoord layerTexCoord, float
     if (useBias)
     {
         float3 normalOS = SAMPLE_LAYER_NORMALMAP_RGB_BIAS(ADD_IDX(_NormalMap), ADD_ZERO_IDX(sampler_NormalMap), ADD_IDX(layerTexCoord.base), ADD_IDX(_NormalScale), bias).rgb;
+        #ifdef SURFACE_GRADIENT
+        // TODO: What can I do here, I need a way to know I am object space normal inside SAMPLE_LAYER_NORMALMAP_RGB_BIAS
+        // then call surfgradFromPerturbedNormal. But how do I call the triplanar as I need derivative there...
+        // or do I lerp grad based on blend weight, then call surfgradFromVolumeGradient ?
+        normalTS = normalOS;
+        #else
         normalTS = TransformObjectToTangent(normalOS, input.tangentToWorld);
+        #endif
     }
     else
     {
         float3 normalOS = SAMPLE_LAYER_NORMALMAP_RGB(ADD_IDX(_NormalMap), ADD_ZERO_IDX(sampler_NormalMap), ADD_IDX(layerTexCoord.base), ADD_IDX(_NormalScale)).rgb;
+        #ifdef SURFACE_GRADIENT
+        normalTS = normalOS;
+        #else
         normalTS = TransformObjectToTangent(normalOS, input.tangentToWorld);
+        #endif
     }
     #endif
 
     #ifdef _DETAIL_MAP_IDX
+    
+    #ifdef SURFACE_GRADIENT
+    normalTS += detailNormalTS;
+    #else
     normalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS), detailMask);
     #endif
+
+    #endif
 #else
+
+    #ifdef SURFACE_GRADIENT
+    normalTS = float3(0.0, 0.0, 0.0); // No gradient for vtxNormal
+    #else
     normalTS = float3(0.0, 0.0, 1.0);
+    #endif
+
 #endif
+
+    // TODO: Ask Morten: Does it work by flipping gradient ? What about mirroring ?
 
 #if defined(_DOUBLESIDED_LIGHTING_FLIP) || defined(_DOUBLESIDED_LIGHTING_MIRROR)
     #ifdef _DOUBLESIDED_LIGHTING_FLIP

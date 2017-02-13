@@ -164,6 +164,41 @@ FragInputs UnpackVaryingsMeshToFragInputs(PackedVaryingsMeshToPS input)
     output.isFrontFace = IS_FRONT_VFACE(input.cullFace, true, false);
 #endif
 
+#ifdef SURFACE_GRADIENT
+    // cache all things that can be cached for on the fly bump mapping across arb. UVs
+    float3 tmpDirOfPos = toWorldSpace(surf_pos);    // NO TRANSLATION! Just 3x3 transform
+    float3 dPdx = ddx_fine(tmpDirOfPos);        // assumed to start out in camera space to avoid float precision issues
+    float3 dPdy = ddy_fine(tmpDirOfPos);
+    float renormFactor = 1.0 / length(input.interpolators1);
+    float3 nrmVertexNormal = renormFactor * input.interpolators1;
+    output.sigmaX = dPdx - dot(dPdx, nrmVertexNormal) * nrmVertexNormal;
+    output.sigmaY = dPdy - dot(dPdy, nrmVertexNormal) * nrmVertexNormal;
+    //float flip_sign = dot(sigmaY, cross(nrmVertexNormal, sigmaX) ) ? -1 : 1;
+    output.flipSign = dot(dPdy, cross(nrmVertexNormal, dPdx)) < 0 ? -1 : 1;     // gives same as the commented out line above
+
+    output.vtxNormalWS = nrmVertexNormal;
+
+    // mikkts for conventional vertex level tspace (no normalizes is mandatory)  
+    output.mikktsTang = input.interpolators2.xyz;
+    // bitangent on the fly option in xnormal to reduce vertex shader outputs. Also described in https://wiki.blender.org/index.php/Dev:Shading/Tangent_Space_Normal_Maps
+    output.mikktsBino = (input.interpolators2.w > 0.0 ? 1.0 : -1.0) * cross(input.interpolators1, input.interpolators2.xyz);
+    // prepare for surfgrad formulation without breaking compliance (use exact same scale as applied to interpolated vertex normal to avoid breaking compliance).
+    output.mikktsTang *= renormFactor;
+    output.mikktsBino *= renormFactor;
+
+    // TODO: ask morten it is supposed to be independent of tiling, right ? So I can process for all the UV here ?
+#ifdef VARYINGS_NEED_TEXCOORD1
+    genBasisTB(nrmVertexNormal, sigmaX, sigmaY, flipSign, output.vT1, output.vB1, output.texCoord1);
+#endif
+#ifdef VARYINGS_NEED_TEXCOORD2
+    genBasisTB(nrmVertexNormal, sigmaX, sigmaY, flipSign, output.vT2, output.vB2, output.texCoord2);
+#endif
+#ifdef VARYINGS_NEED_TEXCOORD3
+    genBasisTB(nrmVertexNormal, sigmaX, sigmaY, flipSign, output.vT3, output.vB3, output.texCoord3);
+#endif
+
+#endif
+
     return output;
 }
 
